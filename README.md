@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - [Python](https://www.python.org/) (version 3.6 or higher)
-- [pip](https://pip.pypa.io/en/stable/)
+
 
 ## Installation
 
