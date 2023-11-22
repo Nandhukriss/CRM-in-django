@@ -1,0 +1,135 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+<h1 class="display-2 text-center fw-bold">CRM Application</h1>
+<div class="row mx-4">
+
+    <div class="col-12 col-md-3">
+      <h1 class="display-6 ms-3 text-center">Details Form</h1>
+
+        <form method='post'>
+            {% csrf_token %}
+            <div class="mb-3 form-floating text-dark">
+              
+              <input type="text" class="form-control " id="name"  placeholder='Name' name='name' autocomplete="false" required>
+              <label for="floatingInput ">Name</label>
+            </div>
+            <div class="mb-3 form-floating  text-dark">
+             
+              <input type="email" class="form-control" id="exampleInputEmail1"  placeholder='Email' name='email'autocomplete="false"  required>
+              <label for="floatingInput ">Email</label>
+
+            </div>
+            <div class="mb-3 form-floating  text-dark">
+              
+              <input type="number" class="form-control" id="Phone" placeholder='Phone' name='phone'autocomplete="false"  required>
+              <label for="floatingInput ">Phone</label>
+
+            </div>
+            <div class="mb-3 form-floating text-dark ">
+              
+              <input type="text" class="form-control" id="gender" placeholder='gender' name='gender'autocomplete="false"  required>
+              <label for="floatingInput ">Gender</label>
+
+            </div>
+            <div class="mb-3 form-floating  text-dark">
+              
+              <input type="text" class="form-control" id="Address" placeholder='Address' name='address' autocomplete="false" required>
+              <label for="floatingInput ">Address</label>
+
+            </div>
+            <div class="mb-3 form-floating  text-dark">
+             
+              <input type="text" class="form-control" id="Pincode" placeholder='Pincode' name='pincode' autocomplete="false" required>
+              <label for="floatingInput ">Pincode</label>
+
+            </div>
+            <button type="submit" class="btn btn-success w-100">ADD DETAILS</button>
+          </form>
+          {% if msg %}
+          <div class="alert alert-success alert-dismissible">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <strong>{{msg}}</strong>
+          </div>
+          {% endif %}
+    </div>
+
+    <div class="col-12 col-md-9 mt-5 ">
+      {% if person %}
+
+        <table class="table table-light table-striped mt-2 table-hover table-responsive">
+            <thead>
+              <tr class="table-success">
+                <th scope="col">SL NO</th>
+                <th scope="col">Name</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Gender</th>
+                <th scope="col">Pincode</th>
+                <th scope="col">Edit Data</th>
+                <th scope="col">Delete Data</th>
+                <th scope="col">More Details</th>
+              </tr>
+            </thead>
+            <tbody>
+
+                {% for detail in person %}
+                <tr class="border border-2 border-black">
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{detail.name|capfirst}}</td>
+                    <td>{{detail.phone}}</td>
+                    <td>{{detail.gender|capfirst}}</td>
+                    <td>{{detail.pincode}}</td>
+                    <td><a href="{% url 'edit' detail.id %}" class="btn btn-info text-white">EDIT</a></td>
+                    <!-- <td><a href="{% url 'delete' detail.id %}" class="btn btn-danger delete">DELETE</a></td> -->
+                    <td><a href="#" data-url="{% url 'delete' detail.id %}"class="btn btn-danger delete">DELETE</a></td>
+                    <td><a href="{% url 'detail' detail.id %}" class="btn btn-success">View Details</a></td>
+                </tr>
+                {% endfor %}
+
+              {% else %}
+              <h1 class="display-5 text-center ">No Customers 🤷</h1>
+
+              {% endif %}
+
+            </tbody>
+          </table>
+    </div>
+    
+</div>    
+
+<script>
+
+
+
+let allDltBtn=document.getElementsByClassName('delete')
+
+for(let i=0;i<allDltBtn.length;i++){
+
+  allDltBtn[i].addEventListener('click', () => {
+    var url = allDltBtn[i].getAttribute('data-url');
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this User data!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+              window.location.href = url;
+            }  
+                
+            
+        });
+    });
+  }
+
+
+</script>
+{% endblock %}
+
+

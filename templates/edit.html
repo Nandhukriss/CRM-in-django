@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+  
+  {% block content %}
+  <div class="container ">
+    <h1 class="display-5 text-center">EDIT FORM</h1>
+
+      <form method='post' class=" ">
+          {% csrf_token %}
+          <div class="mb-3">
+            
+            <input type="text" class="form-control" id="name" aria-describedby="emailHelp" placeholder='Name' name='name'  value={{obj.name}} required>
+          </div>
+          <div class="mb-3">
+           
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder='Email' name='email'  value={{obj.email}} required>
+          </div>
+          <div class="mb-3">
+            
+            <input type="number" class="form-control" id="Phone" placeholder='Phone' name='phone' value={{obj.phone}}  required>
+          </div>
+          <div class="mb-3">
+            
+            <input type="text" class="form-control" id="gender" placeholder='gender' name='gender' value={{obj.gender}}  required>
+          </div>
+          <div class="mb-3">
+            
+            <input type="text" class="form-control" id="Address" placeholder='Address' name='address' value={{obj.address}}  required>
+          </div>
+          <div class="mb-3">
+           
+            <input type="text" class="form-control" id="Pincode" placeholder='Pincode' name='pincode' value={{obj.pincode}}  required>
+          </div>
+
+          <button type="submit" class="btn btn-success">Update Changes</button>
+        </form>
+
+      </div>
+
+
+        {% endblock %}
+        
