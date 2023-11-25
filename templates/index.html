@@ -11,8 +11,10 @@
     <div class="col-12 col-md-3">
       <h1 class="display-6 ms-3 text-center">Details Form</h1>
 
-        <form method='post'>
+        <form method='post' id="form">
             {% csrf_token %}
+            <input type="hidden" id="cid" name="cid">
+
             <div class="mb-3 form-floating text-dark">
               
               <input type="text" class="form-control " id="name"  placeholder='Name' name='name' autocomplete="false" required>
@@ -20,13 +22,13 @@
             </div>
             <div class="mb-3 form-floating  text-dark">
              
-              <input type="email" class="form-control" id="exampleInputEmail1"  placeholder='Email' name='email'autocomplete="false"  required>
+              <input type="email" class="form-control" id="email"  placeholder='Email' name='email'autocomplete="false"  required>
               <label for="floatingInput ">Email</label>
 
             </div>
             <div class="mb-3 form-floating  text-dark">
               
-              <input type="number" class="form-control" id="Phone" placeholder='Phone' name='phone'autocomplete="false"  required>
+              <input type="number" class="form-control" id="phone" placeholder='Phone' name='phone'autocomplete="false"  required>
               <label for="floatingInput ">Phone</label>
 
             </div>
@@ -38,31 +40,30 @@
             </div>
             <div class="mb-3 form-floating  text-dark">
               
-              <input type="text" class="form-control" id="Address" placeholder='Address' name='address' autocomplete="false" required>
+              <input type="text" class="form-control" id="address" placeholder='Address' name='address' autocomplete="false" required>
               <label for="floatingInput ">Address</label>
 
             </div>
             <div class="mb-3 form-floating  text-dark">
              
-              <input type="text" class="form-control" id="Pincode" placeholder='Pincode' name='pincode' autocomplete="false" required>
+              <input type="text" class="form-control" id="pincode" placeholder='Pincode' name='pincode' autocomplete="false" required>
               <label for="floatingInput ">Pincode</label>
 
             </div>
-            <button type="submit" class="btn btn-success w-100">ADD DETAILS</button>
+            <button type="submit" class="btn btn-success w-100 " id="btn-submit">ADD DETAILS</button>
           </form>
-          {% if msg %}
-          <div class="alert alert-success alert-dismissible">
+
+          <div class="alert alert-success alert-dismissible d-none" id="alert">
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            <strong>{{msg}}</strong>
+            <strong id="delete-text">Details Saved</strong>
           </div>
-          {% endif %}
+
     </div>
 
     <div class="col-12 col-md-9 mt-5 ">
-      {% if person %}
 
-        <table class="table table-light table-striped mt-2 table-hover table-responsive">
-            <thead>
+        <table class="table table-light table-striped mt-2 table-hover table-responsive" id="myTable ">
+            <thead id="head">
               <tr class="table-success">
                 <th scope="col">SL NO</th>
                 <th scope="col">Name</th>
@@ -74,7 +75,7 @@
                 <th scope="col">More Details</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="tbody">
 
                 {% for detail in person %}
                 <tr class="border border-2 border-black">
@@ -83,53 +84,187 @@
                     <td>{{detail.phone}}</td>
                     <td>{{detail.gender|capfirst}}</td>
                     <td>{{detail.pincode}}</td>
-                    <td><a href="{% url 'edit' detail.id %}" class="btn btn-info text-white">EDIT</a></td>
-                    <!-- <td><a href="{% url 'delete' detail.id %}" class="btn btn-danger delete">DELETE</a></td> -->
-                    <td><a href="#" data-url="{% url 'delete' detail.id %}"class="btn btn-danger delete">DELETE</a></td>
-                    <td><a href="{% url 'detail' detail.id %}" class="btn btn-success">View Details</a></td>
+                    <td><a  class="btn btn-info text-white btn-edit" data-cid='{{detail.id}}'>EDIT</a></td>
+                    <td><a href="#" data-cid="{{detail.id}}" class="btn btn-danger delete btn-del">DELETE</a></td>
+                    <td><a href="{% url 'detail' detail.id %}" class="btn btn-success" data-cid="{{detail.id}}">View Details</a></td>
                 </tr>
                 {% endfor %}
 
-              {% else %}
-              <h1 class="display-5 text-center ">No Customers 🤷</h1>
+        
+              
 
-              {% endif %}
-
+          
             </tbody>
           </table>
     </div>
     
-</div>    
+</div>  
 
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 
+const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
 
-let allDltBtn=document.getElementsByClassName('delete')
+//create customer
+$('#btn-submit').click(function(e){
+  e.preventDefault()
+let output = ""
+let id = $('#cid').val();
+let name=$('#name').val()
+let phone=$('#phone').val()
+let email=$('#email').val()
+let gender=$('#gender').val()
+let pincode=$('#pincode').val()
+let address=$('#address').val()
 
-for(let i=0;i<allDltBtn.length;i++){
-
-  allDltBtn[i].addEventListener('click', () => {
-    var url = allDltBtn[i].getAttribute('data-url');
-        swal({
-            title: "Are you sure?",
-            text: "Once deleted, you will not be able to recover this User data!",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        })
-        .then((willDelete) => {
-            if (willDelete) {
-              window.location.href = url;
-            }  
-                
-            
-        });
-    });
+  // Check if phone is not empty
+  if (!phone) {
+    console.error('Phone field is empty or undefined.');
+    return;
   }
 
+customerData={
+  id:id,
+  name:name,
+  address:address,
+  phone:phone,
+  email:email,
+  gender:gender,
+  pincode:pincode
+}
+
+
+  $.ajax({
+    type: "POST",
+    url: "{% url 'create_data' %}",
+    data: customerData, 
+     headers: {
+    'X-CSRFToken': csrftoken
+  },
+    success: function (data) {
+      $('#btn-submit').html('ADD DETAILS')
+      
+      console.log(data.customer_data)
+      if(data.status==='Saved'){
+
+                            for(i=1; i<data.customer_data.length; i++){
+                                output += "<tr class='border border-2 border-black '><td class='fw-bold'>" + i +
+                                    "</td><td>" + data.customer_data[i].name +
+                                    "</td><td>" + data.customer_data[i].phone +
+                                    "</td><td>" + data.customer_data[i].gender +
+                                    "</td><td>" + data.customer_data[i].pincode +
+                                    "</td><td><a class='btn btn-info text-white btn-edit' data-cid="+ data.customer_data[i].id +" >EDIT</a></td><td><a href='#'class='btn btn-danger delete btn-del' data-cid="+ data.customer_data[i].id +">DELETE</a></td><td><a href='/detail/" + data.customer_data[i].id + "' class='btn btn-success '>View Details</a></td></tr>" 
+                                     
+                            }
+                            
+                            $("#tbody").html(output)
+                            $("#form")[0].reset()
+                            $('#alert').removeClass('d-none')
+                           
+
+      }
+      
+      
+    }
+  });
+  });
+
+  //edit customer
+
+  $('#tbody').on('click', '.btn-edit', function(){
+    $('#btn-submit').html('UPDATE DETAILS')
+    let id = $(this).data('cid');
+    console.log(id);
+  // Set the value of the hidden input field with id="cid"
+    $('#cid').val(id);
+    customerData = {id:id}
+
+    $.ajax({
+        url: "{% url 'edit' %}",
+        method:"POST",
+        data:customerData,
+        headers: {
+    'X-CSRFToken': csrftoken
+  },
+
+        success: function(data){
+            console.log(data);
+              $('#name').val(data.name)
+              $('#phone').val(data.phone)
+              $('#email').val(data.email)
+              $('#gender').val(data.gender)
+              $('#pincode').val(data.pincode)
+              $('#address').val(data.address)
+
+            console.log(data.id);
+            
+
+
+        },
+    })
+})
+
+//delete
+
+$("#tbody").on("click", ".btn-del", function(){
+          console.log("Delete Button was clicked");
+          let id = $(this).data("cid")
+          mydata = {id:id}
+          mythis = $(this)
+          $.ajax({
+            url: "{% url 'delete' %}",
+          headers: { 'X-CSRFToken': csrftoken},
+            method: "POST",
+            data: mydata,
+            
+            success: function(data){
+              console.log(data)
+              if(data.status == 1){
+
+                
+              swal({
+                  title: "Are you sure?",
+                  text: "Once deleted, you will not be able to recover this User data!",
+                  icon: "warning",
+                  buttons: true,
+                  dangerMode: true,
+              })
+              .then((willDelete) => {
+                  if (willDelete) {
+                       
+                  console.log("Student Deleted.")
+                  $(mythis).closest("tr").fadeOut();
+                  $('#alert').removeClass('d-none')
+                  $('#alert').addClass('alert-danger').removeClass('alert-success');
+                  $('#delete-text').html('Customer Deleted')
+
+
+
+                  }  
+                    
+              });
+
+              }
+              if(data.status == 0){
+                log("Student Was Unable to be Delete")
+              }
+            }
+          })
+        })
+
+ 
+
+
+
+  
 
 </script>
+
+
+
+
 {% endblock %}
 
 

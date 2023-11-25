@@ -1,62 +1,75 @@
 from django.shortcuts import render,get_object_or_404,redirect
+from django.http import JsonResponse
 from .models import Detailsform
 # Create your views here.
 def index(request):
 
     
-    msg=None
-    detail=''
+    
+ 
+    detail=Detailsform.objects.all() 
+    
+    return render(request,'index.html',{"person":detail})
+
+
+def create_data(request):
+
     if request.POST:
-        name=request.POST.get('name')
-        email=request.POST.get('email')
-        phone=request.POST.get('phone')
-        gender=request.POST.get('gender')
-        address=request.POST.get('address')
-        pincode=request.POST.get('pincode')
+            id = request.POST.get("id")
+            print('id',id)
+            name=request.POST.get('name')
+            email=request.POST.get('email')
+            phone=request.POST.get('phone')
+            gender=request.POST.get('gender')
+            address=request.POST.get('address')
+            pincode=request.POST.get('pincode')
         
-        detail=Detailsform(name=name,email=email,phone=phone,gender=gender,address=address,pincode=pincode)
-        detail.save()
-        msg='User Data Added!'
-        detail=Detailsform.objects.all() 
-        return render(request,'index.html',{"person":detail,"msg":msg})
+            if id == "":
+                detail = Detailsform(name=name,email=email,phone=phone,gender=gender,address=address,pincode=pincode)
+            else:
+                detail = Detailsform(id=id,name=name,email=email,phone=phone,gender=gender,address=address,pincode=pincode)
+            detail.save()
+
+            customer_val = Detailsform.objects.values()
+            customer_data = list(customer_val)
+
+            return JsonResponse({"status": "Saved", "customer_data":customer_data})
     else:
-        detail=Detailsform.objects.all() 
-    
-    return render(request,'index.html',{"person":detail,"msg":msg})
-        
-def delete(request,id):
-    
-    obj=get_object_or_404(Detailsform,id=id)
-    obj.delete()
-        
-    return redirect('home')
-    
-def edit(request,id):
-    
-    obj=get_object_or_404(Detailsform,id=id)
+        return JsonResponse({"status": "Not Saved"})
 
-    if request.POST:
-        name=request.POST.get('name')
-        email=request.POST.get('email')
-        phone=request.POST.get('phone')
-        gender=request.POST.get('gender')
-        address=request.POST.get('address')
-        pincode=request.POST.get('pincode')
-        
-        obj.name=name
-        obj.email=email
-        obj.phone=phone
-        obj.gender=gender
-        obj.address=address
-        obj.pincode=pincode
-        obj.save()
-        return redirect('home')
-
-    return render(request,'edit.html',{"obj":obj})
-    
 
     
+        
+def delete(request):
+   
+    if request.method == "POST":
+        id=request.POST.get('id')
+        obj=get_object_or_404(Detailsform,id=id)
+        obj.delete()
+        return JsonResponse({"status":1})
+    else:
+        return JsonResponse({"status": 0})
     
+def edit(request):
+    if request.method == 'POST':
+        id = request.POST.get("id")
+        print('say',id)
+        obj = get_object_or_404(Detailsform, id=id)
+
+        customer_data = {
+            "id": obj.id,
+            "name": obj.name,
+            "email": obj.email,
+            "phone": obj.phone,
+            "pincode": obj.pincode,
+            "gender": obj.gender,
+            "address": obj.address
+        }
+
+        return JsonResponse(customer_data)
+    else:
+        # Handle the case when the request method is not POST
+        return JsonResponse({"status": "error", "message": "Invalid request method"})
 
 def detail_page(request,id):
 
