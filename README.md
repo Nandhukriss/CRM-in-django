@@ -3,6 +3,8 @@
 ## Prerequisites
 
 - [Python](https://www.python.org/) (version 3.6 or higher)
+- [jquery]( https://jquery.com/) 
+
 
 
 ## Installation
@@ -67,8 +69,6 @@
 
 Visit [http://127.0.0.1:8000/](http://127.0.0.1:8000/) in your web browser to access the Django development server.
 
-## Without Customer Data
-![home](https://github.com/Nandhukriss/CRM-in-django/assets/103727372/63f84067-831a-4cb8-a488-1843bbcb3307)
 
 ## With Customer Data
 
@@ -77,3 +77,7 @@ Visit [http://127.0.0.1:8000/](http://127.0.0.1:8000/) in your web browser to ac
 ## Delete Action
 
 ![Delete](https://github.com/Nandhukriss/CRM-in-django/assets/103727372/c280a239-2184-437d-8c97-348a46658329)
+
+## Form validation
+![form validation ](https://github.com/Nandhukriss/CRM-in-django/assets/103727372/090ef4e1-1425-476b-b16b-2d6c7e0853c5)
+
