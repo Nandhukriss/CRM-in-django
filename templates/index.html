@@ -19,36 +19,50 @@
               
               <input type="text" class="form-control " id="name"  placeholder='Name' name='name' autocomplete="false" required>
               <label for="floatingInput ">Name</label>
+              <div class="invalid-feedback">
+                Please Enter The Name.
+              </div>
             </div>
             <div class="mb-3 form-floating  text-dark">
              
               <input type="email" class="form-control" id="email"  placeholder='Email' name='email'autocomplete="false"  required>
               <label for="floatingInput ">Email</label>
+              <div class="invalid-feedback">
+                Please Enter The Email.
+              </div>
 
             </div>
             <div class="mb-3 form-floating  text-dark">
               
               <input type="number" class="form-control" id="phone" placeholder='Phone' name='phone'autocomplete="false"  required>
               <label for="floatingInput ">Phone</label>
-
+              <div class="invalid-feedback">
+                Please Enter The Phone.
+              </div>
             </div>
             <div class="mb-3 form-floating text-dark ">
               
               <input type="text" class="form-control" id="gender" placeholder='gender' name='gender'autocomplete="false"  required>
               <label for="floatingInput ">Gender</label>
-
+              <div class="invalid-feedback">
+                Please Enter The Gender.
+              </div>
             </div>
             <div class="mb-3 form-floating  text-dark">
               
               <input type="text" class="form-control" id="address" placeholder='Address' name='address' autocomplete="false" required>
               <label for="floatingInput ">Address</label>
-
+              <div class="invalid-feedback">
+                Please Enter The Address.
+              </div>
             </div>
             <div class="mb-3 form-floating  text-dark">
              
               <input type="text" class="form-control" id="pincode" placeholder='Pincode' name='pincode' autocomplete="false" required>
               <label for="floatingInput ">Pincode</label>
-
+              <div class="invalid-feedback">
+                Please Enter The Pincode.
+              </div>
             </div>
             <button type="submit" class="btn btn-success w-100 " id="btn-submit">ADD DETAILS</button>
           </form>
@@ -109,7 +123,14 @@ const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
 //create customer
 $('#btn-submit').click(function(e){
-  e.preventDefault()
+
+    e.preventDefault();
+
+
+
+
+
+
 let output = ""
 let id = $('#cid').val();
 let name=$('#name').val()
@@ -119,11 +140,12 @@ let gender=$('#gender').val()
 let pincode=$('#pincode').val()
 let address=$('#address').val()
 
-  // Check if phone is not empty
-  if (!phone) {
-    console.error('Phone field is empty or undefined.');
+// Check if required fields are not empty
+if (!name || !phone || !email || !gender || !pincode || !address) {
+    console.error('One or more required fields are empty.');
+    form.classList.add('was-validated');
     return;
-  }
+}
 
 customerData={
   id:id,
@@ -149,8 +171,8 @@ customerData={
       console.log(data.customer_data)
       if(data.status==='Saved'){
 
-                            for(i=1; i<data.customer_data.length; i++){
-                                output += "<tr class='border border-2 border-black '><td class='fw-bold'>" + i +
+                            for(i=0; i<data.customer_data.length; i++){
+                                output += "<tr class='border border-2 border-black '><td class='fw-bold'>" +(i + 1) +
                                     "</td><td>" + data.customer_data[i].name +
                                     "</td><td>" + data.customer_data[i].phone +
                                     "</td><td>" + data.customer_data[i].gender +
@@ -160,8 +182,10 @@ customerData={
                             }
                             
                             $("#tbody").html(output)
+                            $("#form").removeClass('was-validated');
                             $("#form")[0].reset()
                             $('#alert').removeClass('d-none')
+                            
                            
 
       }
